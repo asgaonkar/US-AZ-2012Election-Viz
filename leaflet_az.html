@@ -1,184 +1,228 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>US-AZ County 2012 Election Result</title>
-  <meta charset="utf-8" />
+  <head>
+    <title>US-AZ County 2012 Election Result</title>
+    <meta charset="utf-8" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="stylesheet" href="leaflet.css" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="leaflet.css" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+      integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
 
-  <style>
-    #map {
-      width: 800px;
-      height: 500px;
-    }
+    <style>
+      #map {
+        width: 800px;
+        height: 500px;
+      }
 
-    .info {
-      padding: 6px 8px;
-      font: 14px/16px Arial, Helvetica, sans-serif;
-      background: white;
-      background: rgba(255,255,255,0.8);
-      box-shadow: 0 0 15px rgba(0,0,0,0.2);
-      border-radius: 5px;
-    }
-    .info h4 {
-      margin: 0 0 5px;
-      color: #777;
-    }
+      .info {
+        padding: 6px 8px;
+        font: 14px/16px Arial, Helvetica, sans-serif;
+        background: white;
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+      }
+      .info h4 {
+        margin: 0 0 5px;
+        color: #777;
+      }
 
-    .legend {
-      text-align: left;
-      line-height: 18px;
-      color: #555;
-    }
-    .legend i {
-      width: 18px;
-      height: 18px;
-      float: left;
-      margin-right: 8px;
-      opacity: 0.7;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="row">
-      <div style="text-align: center;" class="text-center">
-        <h4>Arizona-US 2012 Election Result</h4>
+      .legend {
+        text-align: left;
+        line-height: 18px;
+        color: #555;
+      }
+      .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body onload="hide_control()">
+    <div class="container">
+      <br>
+      <div class="row" style="display: block !important;">
+        <h4 class="text-center">Arizona-US 2012 Election Result</h4>
       </div>
-    </div>
-    <div class="row">
-      <div id="map" style="width: 100%;"</div>
-    </div>
-
-  </div>
-
-  <script src="leaflet.js"></script>
-  <script type="text/javascript" src="az.js"></script>  
-  <script type="text/javascript">
-
-
-    var map = L.map('map').setView([34, -111], 6);
-
-    L.tileLayer('', {
-      maxZoom: 18,
-      id: 'examples.map-20v6611k'
-    }).addTo(map);
-
-    // control that shows state info on hover
-    var info = L.control();
-
-    info.onAdd = function (map) {
-      this._div = L.DomUtil.create('div', 'info');
-      this.update();
-      return this._div;
-    };
-
-    info.update = function (props) {
-      this._div.innerHTML = '<h4>Arizona County Election Results</h4>' +  (props ?
-        '<b>' + props.name + '</b><hr>' + '<b>Winner: </b>' + props.Winner + '<hr>' 
-        + 'Obama: ' + props.Obama + '/' + props.Total_Votes + ' (' + props.Obama_per + '%) ' 
-        + '<br>Romney: ' + props.Romney + '/' + props.Total_Votes + ' (' + props.Romney_per + '%) '
-        : 'Hover over a County');
-    };
-
-    info.addTo(map);
-
-
-    // get color depending on population density value
-    function getColor(d,prop) {
-      // console.log(prop);
+      <br>
+      <br>
+      <div class="row">
+        <div class="col-lg-1"></div>
+        <div class="col-lg-5">
+          <div id="map" style="width: 100%;"></div>
+        </div>
+        <div class="col-lg-5">
+          <div class="value"></div>
+        </div>
+        <div class="col-lg-1"></div>
+      </div>
       
-      return d == "Obama" ? '#3C3B6E' : '#B42033';
-    }
+    </div>
 
-    function style(feature) {
-      return {
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.7,
-        fillColor: getColor(feature.properties.Winner, feature.properties)
+    <script src="leaflet.js"></script>
+    <script type="text/javascript" src="az.js"></script>
+    <script type="text/javascript">
+
+      function hide_control(){
+        document.getElementsByClassName("leaflet-control")[1].style.display = "none";
+      }
+
+      var map = L.map("map").setView([34, -111], 6);
+
+      L.tileLayer("", {
+        maxZoom: 18,
+        id: "examples.map-20v6611k"
+      }).addTo(map);
+
+      // control that shows state info on hover
+      var info = L.control();
+
+      info.onAdd = function(map) {
+        this._div = L.DomUtil.create("div", "info");
+        this.update();
+        return this._div;
       };
-    }
 
-    function highlightFeature(e) {
-      var layer = e.target;
+      info.update = function(props) {
 
-      layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-      });
+        document.getElementsByClassName("value")[0].innerHTML = 
+          "<h4>Arizona County Election Results</h4>" +
+            (props
+              ? "<b>" +
+                props.name +
+                "</b><hr>" +
+                "<b>Winner: </b>" +
+                props.Winner +
+                "<hr>" +
+                "Obama: " +
+                props.Obama +
+                "/" +
+                props.Total_Votes +
+                " (" +
+                props.Obama_per +
+                "%) " +
+                "<br>Romney: " +
+                props.Romney +
+                "/" +
+                props.Total_Votes +
+                " (" +
+                props.Romney_per +
+                "%) "
+              : "Hover over a County");
+      };
 
-      if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
+      info.addTo(map);
+
+      // get color depending on population density value
+      function getColor(d, prop) {
+        // console.log(prop);
+
+        return d == "Obama" ? "#3C3B6E" : "#B42033";
       }
 
-      info.update(layer.feature.properties);
-    }
-
-    var geojson;
-
-    function resetHighlight(e) {
-      geojson.resetStyle(e.target);
-      info.update();
-    }
-
-    function zoomToFeature(e) {
-      map.fitBounds(e.target.getBounds());
-    }
-
-    function onEachFeature(feature, layer) {
-      layer.on({
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-        click: zoomToFeature
-      });
-    }
-
-    geojson = L.geoJson(statesData, {
-      style: style,
-      onEachFeature: onEachFeature
-    }).addTo(map);
-
-
-    var legend = L.control({position: 'bottomright'});
-
-    legend.onAdd = function (map) {
-
-      var div = L.DomUtil.create('div', 'info legend'),
-        grades = ["Obama", "Romney"],
-        labels = [],
-        from, to;
-
-      for (var i = 0; i < grades.length; i++) {
-      //   from = grades[i];
-      //   to = grades[i + 1];
-      
-      
-
-        labels.push(
-          '<i style="background:' + getColor(grades[i],grades[i]) + '"></i> ' + grades[i] + '<br>');
+      function style(feature) {
+        return {
+          weight: 2,
+          opacity: 1,
+          color: "white",
+          dashArray: "3",
+          fillOpacity: 0.7,
+          fillColor: getColor(feature.properties.Winner, feature.properties)
+        };
       }
 
-      div.innerHTML = labels.join('<br>');
-      return div;
-    };
+      function highlightFeature(e) {
+        var layer = e.target;
 
-    legend.addTo(map);
+        layer.setStyle({
+          weight: 5,
+          color: "#666",
+          dashArray: "",
+          fillOpacity: 0.7
+        });
 
+        if (!L.Browser.ie && !L.Browser.opera) {
+          layer.bringToFront();
+        }
 
-   
+        info.update(layer.feature.properties);
+      }
 
+      var geojson;
 
-  </script>
-</body>
+      function resetHighlight(e) {
+        geojson.resetStyle(e.target);
+        info.update();
+      }
+
+      function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+      }
+
+      function onEachFeature(feature, layer) {
+        layer.on({
+          mouseover: highlightFeature,
+          mouseout: resetHighlight,
+          // click: zoomToFeature
+        });
+      }
+
+      geojson = L.geoJson(statesData, {
+        style: style,
+        onEachFeature: onEachFeature
+      }).addTo(map);
+
+      var legend = L.control({ position: "bottomright" });
+
+      legend.onAdd = function(map) {
+        var div = L.DomUtil.create("div", "info legend"),
+          grades = ["Obama", "Romney"],
+          labels = [],
+          from,
+          to;
+
+        for (var i = 0; i < grades.length; i++) {
+          //   from = grades[i];
+          //   to = grades[i + 1];
+
+          labels.push(
+            '<i style="background:' +
+              getColor(grades[i], grades[i]) +
+              '"></i> ' +
+              grades[i] +
+              "<br>"
+          );
+        }
+
+        div.innerHTML = labels.join("<br>");
+        return div;
+      };
+
+      legend.addTo(map);
+    </script>
+  </body>
 </html>
